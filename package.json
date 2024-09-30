@@ -1,7 +1,7 @@
 {
   "name": "GestionEntretiens",
   "version": "1.0.0",
-  "description": "",
+  "description": "Développement d'une application pour gérer l'entretien des avions par les techniciens.",
   "bin": "./bin/cli.js",
   "main": "src/index.ts",
   "scripts": {
@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
-  "author": "",
+  "author": "Malika Amrani",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",

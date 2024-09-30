@@ -18,6 +18,7 @@ app.use(cors(options));
 // Middleware to parse json throught requests.
 app.use(express.json());
 
+app.use("/status",()=>{console.log("le service est démarré")})
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 
