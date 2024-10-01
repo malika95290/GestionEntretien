@@ -6,7 +6,7 @@ Le backend sera implémenté sur NodeJS en Typescript et pourra s’interfacer a
 
 Afin d’anticiper la création de la base de données, on prévoit le model de donnée relatif au schéma donné ci-dessous :
 
-![schema2](https://hackmd.io/_uploads/S1OO66tAC.png)
+![schemaBDD](https://hackmd.io/_uploads/S1OO66tAC.png)
 
 On prévoit également les opérations CRUD attendues pour chaque entité de notre modèle de données :
 
