@@ -8,6 +8,8 @@ Afin d’anticiper la création de la base de données, on prévoit le model de 
 
 ![schemaBDD](https://hackmd.io/_uploads/S1OO66tAC.png)
 
+ou en cliquant via son lien : https://hackmd.io/_uploads/S1OO66tAC.png
+
 On prévoit également les opérations CRUD attendues pour chaque entité de notre modèle de données :
 
 - Avion
