@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import * as middlewares from "./middlewares";
+import avionController from "./pages/AvionController";
 
 require("dotenv").config();
 
@@ -19,6 +20,8 @@ app.use(cors(options));
 app.use(express.json());
 
 app.use("/status",()=>{console.log("le service est démarré")})
+app.use('/avions', avionController);
+
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 
