@@ -6,15 +6,14 @@ Le backend sera implémenté sur NodeJS en Typescript et pourra s’interfacer a
 
 Afin d’anticiper la création de la base de données, on prévoit le model de donnée relatif au schéma donné ci-dessous :
 
-![schemaBDD](https://hackmd.io/_uploads/S1OO66tAC.png)
-
-ou en cliquant via son lien : https://hackmd.io/_uploads/S1OO66tAC.png
+![model](https://hackmd.io/_uploads/SkQv9qcJyl.png)
+ou en cliquant via son lien : https://hackmd.io/_uploads/SkQv9qcJyl.png
 
 On prévoit également les opérations CRUD attendues pour chaque entité de notre modèle de données :
 
 - Avion
     - GetAll
-    - GetById
+    - GetByImmatriculation
     - Create
     - Update
     - Delete

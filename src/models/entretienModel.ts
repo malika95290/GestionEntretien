@@ -1,14 +1,14 @@
 import { pool } from '../models/bdd';
-import { Avion } from '../types/types';
-
+import { Entretien } from '../types/types';
 
 //********** Model **********//
-export const avionModel = {
+export const entretienModel = {
+    // Récupère tous les entretiens
     getAll: async () => {
       let connection;
       try {
         connection = await pool.getConnection();
-        const rows = await pool.query("select * from avion");
+        const rows = await pool.query("select * from entretien");
         return rows;
       } catch (error) {
         return error;
@@ -16,50 +16,41 @@ export const avionModel = {
         if (connection) connection.release();
       }
     },
-  
-    getByImmatriculation: async (immatriculation: string) => {
-        let connection;
-        try {
-            connection = await pool.getConnection();
-            const [rows] = await connection.query(
-                "SELECT * FROM avion WHERE immatriculation = ?",
-                [immatriculation]
-            );
-            return rows; // Retourne les lignes trouvées
-        } catch (error) {
-            throw error;
-        } finally {
-            if (connection) connection.release();
-        }
-    },
-  
-    getWithFilters: async (
-      params: Record<string, string | number | undefined>
-    ) => {
+
+    // Récupère un entretien par son ID
+    getById: async (id: string) => {
       let connection;
       try {
         connection = await pool.getConnection();
-        let query = "select * from avion where ";
+        const rows = await pool.query(
+          `select * from entretien where id = "${id}"`
+        );
+        return rows;
+      } catch (error) {
+        return error;
+      } finally {
+        if (connection) connection.release();
+      }
+    },
+
+    // Récupère les entretiens avec des filtres
+    getWithFilters: async (params: Record<string, string | number | undefined>) => {
+      let connection;
+      try {
+        connection = await pool.getConnection();
+        let query = "select * from entretien where ";
         Object.keys(params).forEach((item, index) => {
-          if (item === "immatriculation") {
+          if (item === "dateEntretien") {
             query += `${item} = "${params[item]}"`;
           }
-          if (item === "marque") {
+          if (item === "description") {
             query += `${item} = "${params[item]}"`;
           }
-          if (item === "modele") {
+          if (item === "immatriculationAvion") {
             query += `${item} = "${params[item]}"`;
           }
-          if (item === "heuresDeVolMin") {
-            query += `heuresDeVol >= ${params[item]}`;
-          }
-          if (item === "heuresDeVolMax") {
-            query += `heuresDeVol <= ${params[item]}`;
-          }
-          if (item === "nonVoleDepuis") {
-            query += `immatriculation not in (
-                          select immatriculationAvion from vol where dateVol 
-                          >= "${params[item]}")`;
+          if (item === "idTechnicien") {
+            query += `${item} = "${params[item]}"`;
           }
           if (index != Object.keys(params).length - 1) {
             query += " and ";
@@ -73,15 +64,16 @@ export const avionModel = {
         if (connection) connection.release();
       }
     },
-  
-    addOne: async (avion: Avion) => {
+
+    // Ajoute un nouvel entretien
+    addOne: async (entretien: Entretien) => {
       let connection;
       try {
         connection = await pool.getConnection();
         const rows = await pool.query(
-          `insert into avion(immatriculation, marque, modele, heuresDeVol) 
-                          values("${avion.immatriculation}", "${avion.marque}", 
-                          "${avion.modele}");`
+          `insert into entretien(dateEntretien, description, immatriculationAvion, idTechnicien) 
+                          values("${entretien.date}", "${entretien.description}", 
+                          "${entretien.immatriculationAvion}", "${entretien.idTechnicien}");`
         );
         return rows;
       } catch (error) {
@@ -90,13 +82,14 @@ export const avionModel = {
         if (connection) connection.release();
       }
     },
-  
-    delete: async (immatriculation: string) => {
+
+    // Supprime un entretien par son ID
+    delete: async (id: string) => {
       let connection;
       try {
         connection = await pool.getConnection();
         const rows = await pool.query(
-          `delete from avion where immatriculation = "${immatriculation}"`
+          `delete from entretien where id = "${id}"`
         );
         return rows;
       } catch (error) {
@@ -105,34 +98,41 @@ export const avionModel = {
         if (connection) connection.release();
       }
     },
-  
+
+    // Met à jour un entretien
     update: async (params: Record<string, string | number | undefined>) => {
       let connection;
       try {
-        if (params["immatriculation"] && Object.keys(params).length > 1) {
-          let query = "update avion set ";
+        if (params["id"] && Object.keys(params).length > 1) {
+          let query = "update entretien set ";
   
           Object.keys(params).forEach((item, index) => {
-            if (item === "marque") {
+            if (item === "dateEntretien") {
               query += `${item} = "${params[item]}"`;
               if (index != Object.keys(params).length - 1) {
                 query += ", ";
               }
             }
-            if (item === "modele") {
+            if (item === "description") {
               query += `${item} = "${params[item]}"`;
               if (index != Object.keys(params).length - 1) {
                 query += ", ";
               }
             }
-            if (item === "heuresDeVol") {
-              query += `${item} = ${params[item]}`;
+            if (item === "immatriculationAvion") {
+              query += `${item} = "${params[item]}"`;
+              if (index != Object.keys(params).length - 1) {
+                query += ", ";
+              }
+            }
+            if (item === "idTechnicien") {
+              query += `${item} = "${params[item]}"`;
               if (index != Object.keys(params).length - 1) {
                 query += ", ";
               }
             }
           });
-          query += ` where immatriculation = "${params["immatriculation"]}"`;
+          query += ` where id = "${params["id"]}"`;
           connection = await pool.getConnection();
           const rows = await pool.query(query);
   
@@ -144,4 +144,4 @@ export const avionModel = {
         if (connection) connection.release();
       }
     },
-  };
+};
