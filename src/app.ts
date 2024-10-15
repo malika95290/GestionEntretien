@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import * as middlewares from "./middlewares";
-import avionController from "./pages/AvionController";
+import avionController from "./pages/avionController";
 import technicienController from "./pages/technicienController";
 import entretienController from "./pages/entretienController";
 require("dotenv").config();

@@ -13,7 +13,8 @@ On prévoit également les opérations CRUD attendues pour chaque entité de not
 
 - Avion
     - GetAll
-    - GetByImmatriculation
+    - GetById
+    - GetWithFilters
     - Create
     - Update
     - Delete
