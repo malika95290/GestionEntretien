@@ -38,23 +38,20 @@ export const avionModel = {
     let connection;
     try {
       connection = await pool.getConnection();
-      let query = "SELECT * FROM avion";
-      
-      // Ajout des filtres seulement s'il y a des paramètres
-      const filterKeys = Object.keys(params).filter(key => params[key] !== undefined);
-      if (filterKeys.length > 0) {
-        query += " WHERE ";
-        filterKeys.forEach((key, index) => {
-          query += `${key} = ?`; // Utilisation de "?" pour éviter l'injection SQL
-          if (index < filterKeys.length - 1) {
-            query += " AND ";
-          }
-        });
-      }
-  
-      const values = filterKeys.map(key => params[key]); // Valeurs correspondantes aux "?"
-      
-      const [rows] = await connection.query(query, values); // Exécution avec les valeurs
+      let query = "select * from avion where ";
+      Object.keys(params).forEach((item, index) => {
+        if (item === "marque") {
+          query += `${item} = "${params[item]}"`;
+        }
+        if (item === "modele") {
+          query += `${item} = "${params[item]}"`;
+        }
+        if (index != Object.keys(params).length - 1) {
+          query += " and ";
+        }
+      });
+      console.log(query);
+      const rows = await pool.query(query);
       return rows;
     } catch (error) {
       return error;
@@ -62,7 +59,6 @@ export const avionModel = {
       if (connection) connection.release();
     }
   },
-  
 
   addOne: async (avion: Avion) => {
     let connection;

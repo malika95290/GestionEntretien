@@ -13,7 +13,14 @@ export const handleGetAvionByImmat = async (immat:string, next: NextFunction) =>
   return (await avionModel.getByImmatriculation(immat)) satisfies Avion[];
 };
 
-export const handleGetAvionByFilters = async (params: Record<string, string | number | undefined>, next: NextFunction) => {
+// export const handleGetAvionByFilters = async (params: Record<string, string | number | undefined>, next: NextFunction) => {
+//   return (await avionModel.getWithFilters(params)) satisfies Avion[];
+// };
+export const handleGetAvionByFilters = async (request: Request, next: NextFunction) => {
+  const params : Record<string, string | number | undefined>={};
+  if(request.query.immatriculation) params["immatriculation"]=request.query.immatriculation.toString();
+  if(request.query.marque) params["marque"]=request.query.marque.toString();
+  if(request.query.model) params["model"]=request.query.model.toString();
   return (await avionModel.getWithFilters(params)) satisfies Avion[];
 };
 
@@ -22,7 +29,7 @@ export const handlePostAvion = async (request: Request, next: NextFunction) => {
     const avion: Avion = {
       immatriculation: request.body.immatriculation.toString(),
       marque: request.body.marque.toString(),
-      modele: request.body.modele.toString(),
+      modele: request.body.model.toString(),
     };
     const results = await avionModel.addOne(avion);
     if (results.affectedRows === 0) {
@@ -70,8 +77,8 @@ export const handlePutAvion = async (request: Request, next: NextFunction) => {
       params["immatriculation"] = request.query.immatriculation.toString();
     if (request.query.marque)
       params["marque"] = request.query.marque.toString();
-    if (request.query.modele)
-      params["modele"] = request.query.modele.toString();
+    if (request.query.model)
+      params["model"] = request.query.model.toString();
     if (request.query.heuresDeVol)
       params["heuresDeVol"] = Number(request.query.heuresDeVol.toString());
 

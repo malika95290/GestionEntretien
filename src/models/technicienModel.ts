@@ -36,7 +36,7 @@ export const technicienModel = {
 
     // Récupérer des techniciens avec filtres
     getWithFilters: async (
-        params: Record<string, string | number | undefined>
+        params: Record<string, string | undefined>
     ) => {
         let connection;
         try {
@@ -56,9 +56,11 @@ export const technicienModel = {
                     query += " AND ";
                 }
             });
+            console.log(query)
             const rows = await pool.query(query);
             return rows;
         } catch (error) {
+            console.error(error);
             return error;
         } finally {
             if (connection) connection.release();

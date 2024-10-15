@@ -54,14 +54,12 @@ async (
 ) => {
     try {
         const params = request.query as Record<string, string | number | undefined>;
-        console.log(params)
-        response.status(200).json(await handleGetAvionByFilters(params, next));
+        response.status(200).json(await handleGetAvionByFilters(request, next));
     } catch (error) {
     next(error);
     }
 }
 );
-
 
 // CREATE MIDDLEWARE
 router.post(

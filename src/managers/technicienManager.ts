@@ -11,6 +11,14 @@ export const handleGetAllTechniciens = async (request: Request, next: NextFuncti
   return (await technicienModel.getAll()) satisfies Technicien[];
 };
 
+export const handleGetTechniciensById = async (id: number, next: NextFunction) => {
+  return (await technicienModel.getById(id)) satisfies Technicien[];
+};
+
+export const handleGetTechniciensByFilters = async (params: Record<string, string | undefined>, next: NextFunction) => {
+  return (await technicienModel.getWithFilters(params)) satisfies Technicien[];
+};
+
 // Fonction pour ajouter un technicien
 export const handlePostTechnicien = async (request: Request, next: NextFunction) => {
   try {

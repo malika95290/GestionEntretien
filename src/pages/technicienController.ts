@@ -1,6 +1,6 @@
 //********** Imports **********//
 import express, { Request, Response, NextFunction } from 'express';
-import { handleGetAllTechniciens, handlePostTechnicien, handleDeleteTechnicien, handlePutTechnicien } from '../managers/technicienManager';
+import { handleGetAllTechniciens, handlePostTechnicien, handleDeleteTechnicien, handlePutTechnicien, handleGetTechniciensById, handleGetTechniciensByFilters } from '../managers/technicienManager';
 import { Technicien } from '../types/types';
 
 const router = express.Router();
@@ -17,6 +17,36 @@ router.get("/",
         try {
             const techniciens = await handleGetAllTechniciens(request, next);
             response.status(200).json(techniciens);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+router.get("/:id",
+    async (
+        request: Request,
+        response: Response<Technicien[] | string>,
+        next: NextFunction
+    ) => {
+        try {
+            const id = parseInt(request.params.id, 10)
+            response.status(200).json(await handleGetTechniciensById(id, next));
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+router.get("/filtres",
+    async (
+        request: Request,
+        response: Response<Technicien[] | string>,
+        next: NextFunction
+    ) => {
+        try {
+            const params = request.query as Record<string, string | undefined>
+            response.status(200).json(await handleGetTechniciensByFilters(params, next));
         } catch (error) {
             next(error);
         }
