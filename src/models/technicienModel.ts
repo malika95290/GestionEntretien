@@ -90,54 +90,48 @@ export const technicienModel = {
         let connection;
         try {
             connection = await pool.getConnection();
-            const rows = await pool.query(
-                `DELETE FROM technicien WHERE id = ${id}`
+            const rows = await connection.query(
+                `DELETE FROM technicien WHERE id = ?`, [id]
             );
             return rows;
         } catch (error) {
-            return error;
+            throw error;
         } finally {
             if (connection) connection.release();
         }
-    },
-
-    // Mettre à jour un technicien
+    },  
+      
+    // Méthode pour mettre à jour un technicien
     update: async (params: Record<string, string | number | undefined>) => {
         let connection;
         try {
-            if (params["id"] && Object.keys(params).length > 1) {
-                let query = "UPDATE technicien SET ";
-
-                Object.keys(params).forEach((item, index) => {
-                    if (item === "nom") {
-                        query += `${item} = "${params[item]}"`;
-                        if (index != Object.keys(params).length - 1) {
-                            query += ", ";
-                        }
-                    }
-                    if (item === "prenom") {
-                        query += `${item} = "${params[item]}"`;
-                        if (index != Object.keys(params).length - 1) {
-                            query += ", ";
-                        }
-                    }
-                    if (item === "specialite") {
-                        query += `${item} = "${params[item]}"`;
-                        if (index != Object.keys(params).length - 1) {
-                            query += ", ";
-                        }
-                    }
-                });
-                query += ` WHERE id = ${params["id"]}`;
-                connection = await pool.getConnection();
-                const rows = await pool.query(query);
-
-                return rows;
+        // Vérification que l'id est bien présent dans les paramètres
+        if (params["id"] && Object.keys(params).length > 1) {
+            let query = "UPDATE technicien SET ";
+    
+            // Ajout des colonnes à mettre à jour
+            Object.keys(params).forEach((item, index) => {
+            if (item === "nom" || item === "prenom" || item === "specialite") {
+                query += `${item} = "${params[item]}"`;
+                if (index != Object.keys(params).length - 1) {
+                query += ", ";
+                }
             }
-        } catch (error) {
-            return error;
-        } finally {
-            if (connection) connection.release();
+            });
+    
+            // Condition sur l'id du technicien à mettre à jour
+            query += ` WHERE id = ${params["id"]}`;
+    
+            // Exécution de la requête SQL
+            connection = await pool.getConnection();
+            const rows = await connection.query(query);
+    
+            return rows;
         }
-    },
+        } catch (error) {
+        return error;
+        } finally {
+        if (connection) connection.release();
+        }
+    }  
 };

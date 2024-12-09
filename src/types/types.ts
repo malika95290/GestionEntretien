@@ -12,11 +12,9 @@ export interface Technicien {
 }
 
 export interface Entretien {
-    id: number; 
     idTechnicien: number;
-    immatriculationAvion: string; 
-    date: Date; 
-    description?: string; 
-    type: string; 
-  }
-  
+    immatriculation: string;
+    dateEntretien: string;
+    remarque: string;
+    typeEntretien: string;
+}

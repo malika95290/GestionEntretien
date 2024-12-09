@@ -24,6 +24,7 @@ On prévoit également les opérations CRUD attendues pour chaque entité de not
     - GetById
     - GetWithFilters
     - Create
+    - Delete
     - Update
 
 - Entretien
@@ -38,24 +39,26 @@ Afin de couvrir tous les besoins dont l’API aura la charge, nous faisons un ta
 
 
 | Endpoint       | Paramètres  | Description|
-| -------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **POST** /avions | Objet Avion passé dans le body au format JSON ex :<br> `{ "immatriculation": "AB-913", "marque": "Dassault Aviation", "modele": "Super Etendard"}` | Ajoute un avion en base de données et retourne l’avion ajouté                           |
+| -------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------         |
 | **GET** /avions | Aucun| Retourne tous les avions                                                                 |
 | **GET** /avions | `?immatriculation` - string                                                                                    | Retourne l’avion correspondant à l’immatriculation                                       |
-| **GET** /avions | `?marque` - string<br> `?modele` - string<br>  | Retourne les avions selon les filtres passés en paramètres |
+| **GET** /avions/filtres | `?marque` - string<br> `?modele` - string<br>  | Retourne les avions selon les filtres passés en paramètres |
+| **POST** /avions | Objet Avion passé dans le body au format JSON ex :<br> `{ "immatriculation": "AB-913", "marque": "Dassault Aviation", "modele": "Super Etendard"}` | Ajoute un avion en base de données et retourne l’avion ajouté                           |
 | **PUT** /avions | `immatriculation` - string<br> `?marque` - string<br> `?modele` - string<br>           | Met à jour les informations passées en paramètres dans l’avion correspondant à l’immatriculation donnée et retourne l’avion modifié |
-| **DELETE** /avions | `immatriculation` - string | Supprime l’avion |
+| **DELETE** /avions/:immatriculation | `immatriculation` - string | Supprime l’avion en fontion de l'id donné|
+| **GET** /technicien | Aucun | Retourne tous les techniciens                          | 
+|**GET** /technicien/:id | `?id - number` - string | Retourne le technicien correspondant à l'id |
+| **GET** /technicien/filtres | `?nom` - string<br> `?prenom` - string<br> `?specialite` - string<br>  | Retourne les techniciens selon les filtres passés en paramètres |
 | **POST** /technicien | Objet Technicien passé dans le body au format JSON ex :<br> `{ "id": 1, "nom": "Dupond", "prenom": "Bernard", "specialite": "moteur"}` | Ajoute un technicien en base de données et retourne le technicien ajouté                           |
-| **GET** /technicien | Aucun | Retourne tous les techniciens                          || **GET** /technicien | `?id - number` - string | Retourne le technicien correspondant à l'id |
-| **GET** /technicien | `?nom` - string<br> `?prenom` - string<br>  | Retourne les techniciens selon les filtres passés en paramètres |
-| **PUT** /technicien | `id` - number<br> `?nom` - string<br> `?prenom` - string<br>`?dateEntretien` - date<br>`?specialite` - string<br> | Met à jour les informations passées en paramètres dans l’avion correspondant à l’immatriculation donnée et retourne l’avion modifié |
+| **PUT** /technicien | `id` - number<br> `?nom` - string<br> `?prenom` - string<br> `?specialite` - string<br> | Met à jour les informations passées en paramètres du technicien correspondant à l'id donnée et retourne le technicien modifié |
 | **DELETE** /technicien | `id` - number | Supprime le technicien |
-| **POST** /entretien | Objet Entretien passé dans le body au format JSON ex :<br> `{ "id": 1, "idtechnicien": 1, "immatriculation": "AB-913", "dateEntretien": 2024/10/15, "remarque": "ok", "typeEntretien":"réparation moteur"}`| Ajoute un technicien en base de données et retourne le technicien ajouté|
-| **GET** /entretien | Aucun                                                                                                          | Retourne tous les entretiens                                                                 |
-| **GET** /entretien | `?id` - number                                                                                    | Retourne l’entretien correspondant à l’id                                       |
-| **GET** /entretien | `?id` - number<br> `?idtechnicien` - number<br>`?immatriculation` - string<br>`?dateEntretien` - date<br>`?remarque` - string<br>`?typeEntretien` - string<br>  | Retourne les entretiens selon les filtres passés en paramètres |
-| **PUT** /entretien | `id` - number<br> `?idtechnicien` - number<br>`?immatriculation` - string<br>`?dateEntretien` - date<br>`?remarque` - string<br>`?typeEntretien` - string<br>| Met à jour les informations passées en paramètres dans l’entretien correspondant à l’id donnée et retourne l’avion modifié |
-| **DELETE** /entretien | `id` - string | Supprime l’entretien |
+| 
+| **GET** /entretien | Aucun  | Retourne tous les entretiens                                                                 |
+| **GET** /entretien/:id | `?id` - number                                                                                    | Retourne l’entretien correspondant à l’id                                       |
+| **GET** /entretien/filtres | `?id` - number<br> `?idtechnicien` - number<br>`?immatriculation` - string<br>`?dateEntretien` - date<br>`?remarque` - string<br>`?typeEntretien` - string<br>  | Retourne les entretiens selon les filtres passés en paramètres |
+| **POST** /entretien | Objet Entretien passé dans le body au format JSON ex :<br> `{ "id": 1, "idtechnicien": 1, "immatriculation": "AB-913", "dateEntretien": 2024/10/15, "remarque": "ok", "typeEntretien":"réparation moteur"}`| Ajoute un technicien en base de données et retourne le technicien ajouté
+| **PUT** /entretien | `id` - number<br> `?idTechnicien` - number<br>`?immatriculation` - string<br>`?dateEntretien` - date<br>`?remarque` - string<br>`?typeEntretien` - string<br>| Met à jour les informations passées en paramètres dans l’entretien correspondant à l’id donnée et retourne l'entretien modifié |
+| **DELETE** /entretien/:id | `id` - string | Supprime l’entretien |
 
 Etant donné qu’une requête peut être un succès comme une erreur, et ce pour diverses raisons : ressource introuvable, serveur indisponible, etc, nous proposons une gestion des erreurs donnée ci-dessous : 
 

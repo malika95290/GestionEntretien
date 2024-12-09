@@ -43,43 +43,52 @@ export const handlePostTechnicien = async (request: Request, next: NextFunction)
 // Fonction pour supprimer un technicien par ID
 export const handleDeleteTechnicien = async (request: Request, next: NextFunction) => {
   try {
-    if (request.query.id) {
-      const results = await technicienModel.delete(parseInt(request.query.id.toString()));
-      
-      if (results.affectedRows === 0) {
-        throw new Error("Erreur lors de la suppression du technicien");
+      const id = parseInt(request.params.id);
+      if (!id) {
+          throw new Error("ID du technicien manquant ou invalide");
       }
-      const affectedRows = JSON.stringify({ technicienSupprime: results.affectedRows });
-      return JSON.parse(affectedRows);
-    } else {
-      throw new Error("ID du technicien manquant");
-    }
-  } catch (e) {
-    next(e);
+
+      const results = await technicienModel.delete(id);
+      if (results.affectedRows === 0) {
+          throw new Error("Erreur : aucun technicien supprimé (ID introuvable)");
+      }
+
+      return { message: `Le technicien ayant l'id : ${id} a été supprimé` };
+    } catch (error) {
+      next(error);
   }
 };
 
-// Fonction pour mettre à jour un technicien
+
+
 export const handlePutTechnicien = async (request: Request, next: NextFunction) => {
   try {
-    const params: Record<string, string | number | undefined> = {};
-    if (request.query.id) params["id"] = parseInt(request.query.id.toString());
-    if (request.query.nom) params["nom"] = request.query.nom.toString();
-    if (request.query.prenom) params["prenom"] = request.query.prenom.toString();
-    if (request.query.specialite) params["specialite"] = request.query.specialite.toString();
+    const { id, nom, prenom, specialite } = request.body; // Prendre les paramètres du corps de la requête
 
-    if (!params["id"]) {
-      throw new Error("ID du technicien manquant pour la mise à jour");
+    // Vérification que l'id est présent
+    if (!id) {
+      throw new Error("L'id du technicien est requis.");
     }
 
+    // Préparation des paramètres à mettre à jour
+    const params: Record<string, string | number | undefined> = { id };
+
+    if (nom) params["nom"] = nom;
+    if (prenom) params["prenom"] = prenom;
+    if (specialite) params["specialite"] = specialite;
+
+    // Mise à jour dans la base de données
     const results = await technicienModel.update(params);
+
+    // Vérifier si des lignes ont été affectées
     if (results.affectedRows === 0) {
-      throw new Error("Erreur lors de la mise à jour du technicien");
-    } else if (params["id"]) {
-      const updatedTechnicien = await technicienModel.getById(params["id"] as number);
-      return updatedTechnicien;
+      throw new Error("Aucun technicien trouvé avec cet id.");
     }
-  } catch (e) {
-    next(e);
+
+    // Retourner le technicien mis à jour
+    return await technicienModel.getById(id);
+  } catch (error) {
+    next(error); // Propager l'erreur au middleware d'erreur
   }
 };
+

@@ -52,9 +52,6 @@ export const entretienModel = {
           });
         }
     
-        console.log("Generated Query:", query);
-        console.log("Query Values:", values);
-    
         const rows = await connection.query(query, values);
         return rows;
       } catch (error) {
@@ -64,110 +61,73 @@ export const entretienModel = {
         if (connection) connection.release();
       }
     },
-    
-    // Récupère les entretiens avec des filtres
-    //getWithFilters: async (params: Record<string, string | number | undefined>) => {
-      //let connection;
-      //try {
-        //connection = await pool.getConnection();
-        //let query = "select * from entretien where ";
-       // Object.keys(params).forEach((item, index) => {
-    //     if (item === "dateEntretien") {
-    //       query += `${item} = "${params[item]}"`;
-     //     }
-     //     if (item === "description") {
-     //       query += `${item} = "${params[item]}"`;
-     //     }
-     //     if (item === "immatriculationAvion") {
-     //       query += `${item} = "${params[item]}"`;
-     //     }
-     //     if (item === "idTechnicien") {
-     //       query += `${item} = "${params[item]}"`;
-     //     }
-     //     if (index != Object.keys(params).length - 1) {
-     //       query += " and ";
-     //     }
-     //   });
-     //   const rows = await pool.query(query);
-     //   return rows;
-     // } catch (error) {
-     //   return error;
-     // } finally {
-     //   if (connection) connection.release();
-     // }
-    //},
 
     // Ajoute un nouvel entretien
     addOne: async (entretien: Entretien) => {
       let connection;
       try {
-        connection = await pool.getConnection();
-        const rows = await pool.query(
-          `insert into entretien(dateEntretien, description, immatriculationAvion, idTechnicien) 
-                          values("${entretien.date}", "${entretien.description}", 
-                          "${entretien.immatriculationAvion}", "${entretien.idTechnicien}");`
-        );
-        return rows;
+          connection = await pool.getConnection(); // Récupère une connexion à la base de données
+  
+          // Insère l'entretien dans la table
+          const result = await connection.query(
+              `INSERT INTO entretien (idTechnicien, immatriculation, dateEntretien, remarque, typeEntretien) 
+              VALUES (?, ?, ?, ?, ?)`,
+              [entretien.idTechnicien, entretien.immatriculation, entretien.dateEntretien, entretien.remarque, entretien.typeEntretien]
+          );
+  
+          // Retourne un objet avec l'ID de l'entretien nouvellement ajouté
+          return {
+              id: Number(result.insertId),  // Convertir insertId en Number
+              ...entretien  // Retourne aussi les autres propriétés de l'entretien
+          };
       } catch (error) {
-        return error;
+          throw error; // Lance une erreur en cas de problème
       } finally {
-        if (connection) connection.release();
+          if (connection) connection.release(); // Libère la connexion après l'exécution
       }
+    },
+  
+      delete: async (id: number) => {
+        let connection;
+        try {
+            connection = await pool.getConnection(); // Obtenir une connexion
+            const rows = await pool.query(
+                `DELETE FROM entretien WHERE id = ?`, [id] // Utilisation des placeholders pour éviter les injections SQL
+            );
+            return rows;
+        } catch (error) {
+            throw error; // Renvoyer l'erreur pour un traitement ultérieur
+        } finally {
+            if (connection) connection.release(); // Libérer la connexion
+        }
     },
 
-    // Supprime un entretien par son ID
-    delete: async (id: string) => {
-      let connection;
-      try {
-        connection = await pool.getConnection();
-        const rows = await pool.query(
-          `delete from entretien where id = "${id}"`
-        );
-        return rows;
-      } catch (error) {
-        return error;
-      } finally {
-        if (connection) connection.release();
-      }
-    },
 
     // Met à jour un entretien
     update: async (params: Record<string, string | number | undefined>) => {
       let connection;
       try {
+        // Vérification que l'ID est bien présent dans les paramètres
         if (params["id"] && Object.keys(params).length > 1) {
-          let query = "update entretien set ";
-  
+          let query = "UPDATE entretien SET ";
+
+          // Ajout des colonnes à mettre à jour
           Object.keys(params).forEach((item, index) => {
-            if (item === "dateEntretien") {
-              query += `${item} = "${params[item]}"`;
-              if (index != Object.keys(params).length - 1) {
-                query += ", ";
-              }
-            }
-            if (item === "description") {
-              query += `${item} = "${params[item]}"`;
-              if (index != Object.keys(params).length - 1) {
-                query += ", ";
-              }
-            }
-            if (item === "immatriculationAvion") {
-              query += `${item} = "${params[item]}"`;
-              if (index != Object.keys(params).length - 1) {
-                query += ", ";
-              }
-            }
-            if (item === "idTechnicien") {
+            if (item === "idTechnicien" || item === "immatriculation" || item === "dateEntretien" || item === "remarque" || item === "typeEntretien") {
               query += `${item} = "${params[item]}"`;
               if (index != Object.keys(params).length - 1) {
                 query += ", ";
               }
             }
           });
-          query += ` where id = "${params["id"]}"`;
+
+          // Condition sur l'ID de l'entretien à mettre à jour
+          query += ` WHERE id = ${params["id"]}`;
+
+          // Exécution de la requête SQL
           connection = await pool.getConnection();
-          const rows = await pool.query(query);
-  
+          const rows = await connection.query(query);
+
           return rows;
         }
       } catch (error) {
@@ -175,5 +135,6 @@ export const entretienModel = {
       } finally {
         if (connection) connection.release();
       }
-    },
+    }
+
 };

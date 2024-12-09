@@ -37,64 +37,84 @@ export const handleGetEntretiensByFilters = async (
 // Gestionnaire pour ajouter un nouvel entretien
 export const handlePostEntretien = async (request: Request, next: NextFunction) => {
   try {
-    const entretien: Entretien = {
-      id: request.body.id,
-      date: request.body.dateEntretien.toString(),
-      description: request.body.description.toString(),
-      immatriculationAvion: request.body.immatriculationAvion.toString(),
-      idTechnicien: request.body.idTechnicien.toString(),
-      type: ""
-    };
-    
-    const results = await entretienModel.addOne(entretien);
-    if (results.affectedRows === 0) {
-      throw new Error("Erreur lors de l'ajout de l'entretien.");
-    } else {
-      const entretienAjoute = await entretienModel.getById(entretien.id.toString());
-      return entretienAjoute;
-    }
+      const body = request.body;
+
+      // Vérification des champs obligatoires
+      if (!body.idTechnicien || !body.immatriculation || !body.dateEntretien || !body.remarque || !body.typeEntretien) {
+          throw new Error("Tous les champs obligatoires doivent être fournis.");
+      }
+
+      // Préparation de l'objet Entretien
+      const entretien: Entretien = {
+          idTechnicien: body.idTechnicien,
+          immatriculation: body.immatriculation,
+          dateEntretien: body.dateEntretien, // Assurez-vous que la date est au format "YYYY-MM-DD"
+          remarque: body.remarque,
+          typeEntretien: body.typeEntretien,
+      };
+
+      // Ajouter l'entretien en base de données via le modèle
+      const newEntretien = await entretienModel.addOne(entretien);
+
+      // Retourner l'entretien ajouté
+      return newEntretien;
+
   } catch (e) {
-    next(e);
+      next(e); // Gestion des erreurs
   }
 };
 
-// Gestionnaire pour supprimer un entretien
+
 export const handleDeleteEntretien = async (request: Request, next: NextFunction) => {
   try {
-    if (request.query.id) {
-      const results = await entretienModel.delete(request.query.id.toString());
-
-      if (results.affectedRows === 0) {
-        throw new Error("Erreur lors de la suppression de l'entretien.");
+      const id = parseInt(request.params.id); // Récupérer l'ID depuis les paramètres
+      if (!id) {
+          throw new Error("ID de l'entretien manquant ou invalide.");
       }
-      const affectedRows = JSON.stringify({
-        entretienSupprime: results.affectedRows,
-      });
-      return JSON.parse(affectedRows);
-    }
-  } catch (e) {
-    next(e);
+
+      const results = await entretienModel.delete(id);
+      if (results.affectedRows === 0) {
+          throw new Error("Erreur : aucun entretien supprimé (ID introuvable).");
+      }
+
+      return { message: `L'entretien ayant l'id : ${id} a été supprimé.` }; // Message de succès
+  } catch (error) {
+      next(error); // Passe l'erreur pour qu'elle soit gérée
   }
 };
+
 
 // Gestionnaire pour mettre à jour un entretien
 export const handlePutEntretien = async (request: Request, next: NextFunction) => {
- try {
-    const params: Record<string, string | number | undefined> = {};
-    if (request.query.id) params["id"] = request.query.id.toString();
-    if (request.query.dateEntretien) params["dateEntretien"] = request.query.dateEntretien.toString();
-    if (request.query.description) params["description"] = request.query.description.toString();
-    if (request.query.immatriculationAvion) params["immatriculationAvion"] = request.query.immatriculationAvion.toString();
-    if (request.query.idTechnicien) params["idTechnicien"] = request.query.idTechnicien.toString();
+  try {
+    const { id, idTechnicien, immatriculation, dateEntretien, remarque, typeEntretien } = request.body; // Paramètres dans le corps de la requête
 
-    const results = await entretienModel.update(params);
-    if (results.affectedRows === 0) {
-      throw new Error("Erreur lors de la mise à jour de l'entretien.");
-    } else if (params["id"]) {
-      const updatedEntretien = await entretienModel.getById(params["id"].toString());
-      return updatedEntretien;
+    // Vérifier que l'ID est présent
+    if (!id) {
+      throw new Error("L'id de l'entretien est requis.");
     }
-  } catch (e) {
-    next(e);
+
+    // Préparation des paramètres à mettre à jour
+    const params: Record<string, string | number | undefined> = { id };
+
+    if (idTechnicien) params["idTechnicien"] = idTechnicien;
+    if (immatriculation) params["immatriculation"] = immatriculation;
+    if (dateEntretien) params["dateEntretien"] = dateEntretien;
+    if (remarque) params["remarque"] = remarque;
+    if (typeEntretien) params["typeEntretien"] = typeEntretien;
+
+    // Mise à jour dans la base de données
+    const results = await entretienModel.update(params);
+
+    // Vérifier si des lignes ont été affectées
+    if (results.affectedRows === 0) {
+      throw new Error("Aucun entretien trouvé avec cet id.");
+    }
+
+    // Retourner l'entretien mis à jour
+    return await entretienModel.getById(id);
+  } catch (error) {
+    next(error); // Propager l'erreur au middleware d'erreur
   }
 };
+

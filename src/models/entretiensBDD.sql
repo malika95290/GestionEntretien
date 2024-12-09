@@ -25,8 +25,8 @@ CREATE TABLE entretien (
     dateEntretien DATE NOT NULL,
     remarque VARCHAR(200) NOT NULL,
     typeEntretien VARCHAR(100) NOT NULL,
-    CONSTRAINT fk_immatriculation FOREIGN KEY (immatriculation) REFERENCES avion(immatriculation) ON DELETE CASCADE
-    CONSTRAINT fk_idTechnicien FOREIGN KEY (idTechnicien) REFERENCES technicien(id) ON DELETE CASCADE,
+    CONSTRAINT fk_immatriculation FOREIGN KEY (immatriculation) REFERENCES avion(immatriculation) ON DELETE CASCADE,
+    CONSTRAINT fk_idTechnicien FOREIGN KEY (idTechnicien) REFERENCES technicien(id) ON DELETE CASCADE
 );
 
 -- Création d'un jeu de données pour les tables précédentes

@@ -35,7 +35,6 @@ export const avionModel = {
   getWithFilters: async (
     params: Record<string, string | number | undefined>
   ) => {
-    console.log("model")
 
     let connection;
     try {
@@ -81,15 +80,15 @@ export const avionModel = {
   delete: async (immatriculation: string) => {
     let connection;
     try {
-      connection = await pool.getConnection();
-      const rows = await pool.query(
-        `delete from avion where immatriculation = "${immatriculation}"`
-      );
-      return rows;
+      // Requête SQL pour supprimer un avion
+      const query = "DELETE FROM avion WHERE immatriculation = ?";
+      connection = await pool.getConnection(); // Obtenir une connexion à la base de données
+      const result = await connection.query(query, [immatriculation]); // Exécuter la requête
+      return result; // Retourner les résultats de la suppression
     } catch (error) {
-      return error;
+      throw error; // Propager l'erreur
     } finally {
-      if (connection) connection.release();
+      if (connection) connection.release(); // Libérer la connexion
     }
   },
 
@@ -108,12 +107,6 @@ export const avionModel = {
           }
           if (item === "modele") {
             query += `${item} = "${params[item]}"`;
-            if (index != Object.keys(params).length - 1) {
-              query += ", ";
-            }
-          }
-          if (item === "heuresDeVol") {
-            query += `${item} = ${params[item]}`;
             if (index != Object.keys(params).length - 1) {
               query += ", ";
             }

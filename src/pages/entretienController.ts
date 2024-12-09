@@ -8,7 +8,24 @@ const router = express.Router();
 //********** Routes **********//
 
 // Récupérer tous les entretiens
-router.get("/",
+router.get(
+    "/filtres",
+    async (
+      request: Request,
+      response: Response<Entretien[] | string>,
+      next: NextFunction
+    ) => {
+      try {
+        const params = request.query as Record<string, string | number | undefined>;
+        const results = await handleGetEntretiensByFilters(params, next);
+        response.status(200).json(results);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+  
+  router.get("/",
     async (
         request: Request,
         response: Response<Entretien[] | string>,
@@ -39,22 +56,7 @@ router.get(
     }
   );
 
-  router.get(
-    "/filtres",
-    async (
-      request: Request,
-      response: Response<Entretien[] | string>,
-      next: NextFunction
-    ) => {
-      try {
-        const params = request.query as Record<string, string | number | undefined>;
-        const results = await handleGetEntretiensByFilters(params, next);
-        response.status(200).json(results);
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
+  
 
 // Ajouter un nouvel entretien
 router.post("/",
@@ -73,20 +75,15 @@ router.post("/",
 );
 
 // Supprimer un entretien par ID
-router.delete("/",
-    async (
-        request: Request,
-        response: Response<{ entretienSupprime: number } | string>,
-        next: NextFunction
-    ) => {
-        try {
-            const result = await handleDeleteEntretien(request, next);
-            response.status(200).json(result);
-        } catch (error) {
-            next(error);
-        }
+router.delete("/:id", async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const result = await handleDeleteEntretien(request, next);
+        response.status(200).json(result); // Retourne le message de succès
+    } catch (error) {
+        next(error); // Passe l'erreur au middleware de gestion des erreurs
     }
-);
+});
+
 
 // Mettre à jour un entretien
 router.put("/",
