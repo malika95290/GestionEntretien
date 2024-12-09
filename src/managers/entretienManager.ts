@@ -11,6 +11,29 @@ export const handleGetAllEntretiens = async (request: Request, next: NextFunctio
   return (await entretienModel.getAll()) satisfies Entretien[];
 };
 
+export const handleGetEntretiensById = async (id:string, next: NextFunction) => {
+  return (await entretienModel.getById(id)) satisfies Entretien[];
+};
+
+export const handleGetEntretiensByFilters = async (
+  params: Record<string, string | number | undefined>,
+  next: NextFunction
+) => {
+  try {
+    const filteredParams: Record<string, string | number> = {};
+    if (params.id) filteredParams["id"] = parseInt(params.id as string, 10);
+    if (params.idtechnicien) filteredParams["idtechnicien"] = parseInt(params.idtechnicien as string, 10);
+    if (params.immatriculation) filteredParams["immatriculation"] = params.immatriculation.toString().trim();
+    if (params.dateEntretien) filteredParams["dateEntretien"] = params.dateEntretien.toString().trim();
+    if (params.remarque) filteredParams["remarque"] = params.remarque.toString().trim();
+    if (params.typeEntretien) filteredParams["typeEntretien"] = params.typeEntretien.toString().trim();
+
+    return (await entretienModel.getWithFilters(filteredParams)) satisfies Entretien[];
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Gestionnaire pour ajouter un nouvel entretien
 export const handlePostEntretien = async (request: Request, next: NextFunction) => {
   try {

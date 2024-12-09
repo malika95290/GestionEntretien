@@ -35,6 +35,8 @@ export const avionModel = {
   getWithFilters: async (
     params: Record<string, string | number | undefined>
   ) => {
+    console.log("model")
+
     let connection;
     try {
       connection = await pool.getConnection();
@@ -50,7 +52,6 @@ export const avionModel = {
           query += " and ";
         }
       });
-      console.log(query);
       const rows = await pool.query(query);
       return rows;
     } catch (error) {
@@ -65,7 +66,7 @@ export const avionModel = {
     try {
       connection = await pool.getConnection();
       const rows = await pool.query(
-        `insert into avion(immatriculation, marque, modele, heuresDeVol) 
+        `insert into avion(immatriculation, marque, modele) 
 						values("${avion.immatriculation}", "${avion.marque}", 
 						"${avion.modele}");`
       );
@@ -121,7 +122,6 @@ export const avionModel = {
         query += ` where immatriculation = "${params["immatriculation"]}"`;
         connection = await pool.getConnection();
         const rows = await pool.query(query);
-
         return rows;
       }
     } catch (error) {

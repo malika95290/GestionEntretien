@@ -1,6 +1,6 @@
 //********** Imports **********//
 import express, { Request, Response, NextFunction } from 'express';
-import { handleGetAllEntretiens, handlePostEntretien, handleDeleteEntretien, handlePutEntretien } from '../managers/entretienManager';
+import { handleGetAllEntretiens, handlePostEntretien, handleDeleteEntretien, handlePutEntretien, handleGetEntretiensById, handleGetEntretiensByFilters } from '../managers/entretienManager';
 import { Entretien } from '../types/types';
 
 const router = express.Router();
@@ -22,6 +22,39 @@ router.get("/",
         }
     }
 );
+
+router.get(
+    "/:id",
+    async (
+      request: Request,
+      response: Response<Entretien[] | string>,
+      next: NextFunction
+    ) => {
+      try {
+        const id = request.params.id
+        response.status(200).json(await handleGetEntretiensById(id, next));
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  router.get(
+    "/filtres",
+    async (
+      request: Request,
+      response: Response<Entretien[] | string>,
+      next: NextFunction
+    ) => {
+      try {
+        const params = request.query as Record<string, string | number | undefined>;
+        const results = await handleGetEntretiensByFilters(params, next);
+        response.status(200).json(results);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
 // Ajouter un nouvel entretien
 router.post("/",

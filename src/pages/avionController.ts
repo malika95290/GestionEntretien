@@ -22,6 +22,8 @@ router.get(
     next: NextFunction
   ) => {
     try {
+      
+      console.log("coucou")
       response.status(200).json(await handleGetAllAvions(request, next));
     } catch (error) {
       next(error);
@@ -53,6 +55,7 @@ async (
     next: NextFunction
 ) => {
     try {
+      console.log("controller")
         const params = request.query as Record<string, string | number | undefined>;
         response.status(200).json(await handleGetAvionByFilters(request, next));
     } catch (error) {

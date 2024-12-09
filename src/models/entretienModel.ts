@@ -33,37 +33,69 @@ export const entretienModel = {
       }
     },
 
-    // Récupère les entretiens avec des filtres
-    getWithFilters: async (params: Record<string, string | number | undefined>) => {
+    getWithFilters: async (params: Record<string, string | number>) => {
       let connection;
       try {
         connection = await pool.getConnection();
-        let query = "select * from entretien where ";
-        Object.keys(params).forEach((item, index) => {
-          if (item === "dateEntretien") {
-            query += `${item} = "${params[item]}"`;
-          }
-          if (item === "description") {
-            query += `${item} = "${params[item]}"`;
-          }
-          if (item === "immatriculationAvion") {
-            query += `${item} = "${params[item]}"`;
-          }
-          if (item === "idTechnicien") {
-            query += `${item} = "${params[item]}"`;
-          }
-          if (index != Object.keys(params).length - 1) {
-            query += " and ";
-          }
-        });
-        const rows = await pool.query(query);
+    
+        let query = "SELECT * FROM entretien WHERE ";
+        const values: (string | number)[] = [];
+        const keys = Object.keys(params);
+    
+        if (keys.length === 0) {
+          query = "SELECT * FROM entretien";
+        } else {
+          keys.forEach((key, index) => {
+            query += `${key} = ?`;
+            values.push(params[key]);
+            if (index !== keys.length - 1) query += " AND ";
+          });
+        }
+    
+        console.log("Generated Query:", query);
+        console.log("Query Values:", values);
+    
+        const rows = await connection.query(query, values);
         return rows;
       } catch (error) {
-        return error;
+        console.error("Error in getWithFilters:", error);
+        throw error;
       } finally {
         if (connection) connection.release();
       }
     },
+    
+    // Récupère les entretiens avec des filtres
+    //getWithFilters: async (params: Record<string, string | number | undefined>) => {
+      //let connection;
+      //try {
+        //connection = await pool.getConnection();
+        //let query = "select * from entretien where ";
+       // Object.keys(params).forEach((item, index) => {
+    //     if (item === "dateEntretien") {
+    //       query += `${item} = "${params[item]}"`;
+     //     }
+     //     if (item === "description") {
+     //       query += `${item} = "${params[item]}"`;
+     //     }
+     //     if (item === "immatriculationAvion") {
+     //       query += `${item} = "${params[item]}"`;
+     //     }
+     //     if (item === "idTechnicien") {
+     //       query += `${item} = "${params[item]}"`;
+     //     }
+     //     if (index != Object.keys(params).length - 1) {
+     //       query += " and ";
+     //     }
+     //   });
+     //   const rows = await pool.query(query);
+     //   return rows;
+     // } catch (error) {
+     //   return error;
+     // } finally {
+     //   if (connection) connection.release();
+     // }
+    //},
 
     // Ajoute un nouvel entretien
     addOne: async (entretien: Entretien) => {
