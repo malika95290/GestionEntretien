@@ -60,7 +60,6 @@ export const handleDeleteTechnicien = async (request: Request, next: NextFunctio
 };
 
 
-
 export const handlePutTechnicien = async (request: Request, next: NextFunction) => {
   try {
     const { id, nom, prenom, specialite } = request.body; // Prendre les paramètres du corps de la requête

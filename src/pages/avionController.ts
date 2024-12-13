@@ -85,7 +85,7 @@ router.delete("/:immatriculation", async (request: Request, response: Response, 
   try {
     const deletedAvion = await handleDeleteAvion(request, next);
     if (!deletedAvion) {
-      return response.status(404).json({ message: "Avion introuvable." });
+      return response.status(404).json({ message: "Avion introuvable." }); // Gérer le cas où l'avion n'existe pas
     }
 
     response.status(200).json(deletedAvion); 

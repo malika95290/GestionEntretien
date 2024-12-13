@@ -10,9 +10,13 @@ export const technicienModel = {
         try {
             connection = await pool.getConnection();
             const rows = await pool.query("SELECT * FROM technicien");
+
+            if (rows.length === 0) {
+                throw new Error(`AUCUN TECHNICIEN TROUVE`);
+              }
             return rows;
         } catch (error) {
-            return error;
+            throw new Error(`AUCUN TECHNICIEN TROUVE`);
         } finally {
             if (connection) connection.release();
         }
@@ -26,9 +30,15 @@ export const technicienModel = {
             const rows = await pool.query(
                 `SELECT * FROM technicien WHERE id = ${id}`
             );
+
+            // Vérification si des résultats ont été trouvés
+            if (rows.length === 0) {
+                // Si aucun avion n'a été trouvé, lancer une erreur avec un message spécifique
+                throw new Error(`AUCUN AVION TROUVE - AVEC L'IMMATRICULATION : ${id}`);
+            }
             return rows;
         } catch (error) {
-            return error;
+            throw new Error(`Aucun technicien trouvé ayant l'id : ${id}`);
         } finally {
             if (connection) connection.release();
         }
@@ -56,12 +66,13 @@ export const technicienModel = {
                     query += " AND ";
                 }
             });
-            console.log(query)
             const rows = await pool.query(query);
+            if (rows.length === 0) {
+                throw new Error(`AUCUN TECHNICIEN TROUVE - AVEC LES FILTRES DONNES ${JSON.stringify(params)}`);
+              }
             return rows;
         } catch (error) {
-            console.error(error);
-            return error;
+            throw new Error(`AUCUN TECHNICIEN TROUVE - AVEC LES FILTRES DONNES ${JSON.stringify(params)}`);
         } finally {
             if (connection) connection.release();
         }
@@ -77,9 +88,12 @@ export const technicienModel = {
                  VALUES ("${technicien.nom}", "${technicien.prenom}", 
                  "${technicien.specialite}");`
             );
+            if (rows.length === 0) {
+                throw new Error(`AUCUN TECHNICIEN AJOUTE`);
+            }
             return rows;
         } catch (error) {
-            return error;
+            throw new Error(`AUCUN TECHNICIEN AJOUTE`);
         } finally {
             if (connection) connection.release();
         }
@@ -93,9 +107,13 @@ export const technicienModel = {
             const rows = await connection.query(
                 `DELETE FROM technicien WHERE id = ?`, [id]
             );
+
+            if (rows.affectedRows === 0) {
+                throw new Error(`AUCUN TECHNICIEN SUPPRIME - Peut-être que l'id n'existe pas en BDD.`);
+            }
             return rows;
         } catch (error) {
-            throw error;
+            throw new Error(`AUCUN TECHNICIEN SUPPRIME - Peut-être que l'id n'existe pas en BDD.`);
         } finally {
             if (connection) connection.release();
         }
@@ -125,11 +143,14 @@ export const technicienModel = {
             // Exécution de la requête SQL
             connection = await pool.getConnection();
             const rows = await connection.query(query);
-    
+            if (rows.affectedRows === 0) {
+                throw new Error(`AUCUN TECHNICIEN MODIFIE - Peut-être que l'id n'existe pas en BDD. Le technicien n’a pas été mis à jour`);
+            }
+            
             return rows;
         }
         } catch (error) {
-        return error;
+            throw new Error(`AUCUN TECHNICIEN MODIFIE - Peut-être que l'id n'existe pas en BDD. Le technicien n’a pas été mis à jour`);
         } finally {
         if (connection) connection.release();
         }

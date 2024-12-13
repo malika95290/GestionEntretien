@@ -9,9 +9,13 @@ export const entretienModel = {
       try {
         connection = await pool.getConnection();
         const rows = await pool.query("select * from entretien");
+
+        if (rows.length === 0) {
+          throw new Error(`AUCUN ENTRETIEN TROUVE`);
+        }
         return rows;
       } catch (error) {
-        return error;
+        throw new Error(`AUCUN ENTRETIEN TROUVE`);
       } finally {
         if (connection) connection.release();
       }
@@ -25,9 +29,14 @@ export const entretienModel = {
         const rows = await pool.query(
           `select * from entretien where id = "${id}"`
         );
+        // Vérification si des résultats ont été trouvés
+        if (rows.length === 0) {
+          // Si aucun avion n'a été trouvé, lancer une erreur avec un message spécifique
+          throw new Error(`AUCUN ENTRETIEN TROUVE AVEC L'id : ${id}`);
+        }
         return rows;
       } catch (error) {
-        return error;
+        throw new Error(`Aucun entretien trouvé ayant l'id : ${id}`);
       } finally {
         if (connection) connection.release();
       }
@@ -53,10 +62,13 @@ export const entretienModel = {
         }
     
         const rows = await connection.query(query, values);
+        if (rows.length === 0) {
+          // Si aucun erreur n'a été trouvé, lancer une erreur avec un message spécifique
+          throw new Error(`AUCUN ENTRETIEN TROUVE - AVEC LES FILTRES DONNES ${JSON.stringify(params)}`);
+        }
         return rows;
       } catch (error) {
-        console.error("Error in getWithFilters:", error);
-        throw error;
+        throw new Error(`AUCUN ENTRETIEN TROUVE - AVEC LES FILTRES DONNES ${JSON.stringify(params)}`);
       } finally {
         if (connection) connection.release();
       }
@@ -66,7 +78,7 @@ export const entretienModel = {
     addOne: async (entretien: Entretien) => {
       let connection;
       try {
-          connection = await pool.getConnection(); // Récupère une connexion à la base de données
+          connection = await pool.getConnection();
   
           // Insère l'entretien dans la table
           const result = await connection.query(
@@ -77,13 +89,13 @@ export const entretienModel = {
   
           // Retourne un objet avec l'ID de l'entretien nouvellement ajouté
           return {
-              id: Number(result.insertId),  // Convertir insertId en Number
-              ...entretien  // Retourne aussi les autres propriétés de l'entretien
+              id: Number(result.insertId), 
+              ...entretien  
           };
       } catch (error) {
-          throw error; // Lance une erreur en cas de problème
+          throw new Error(`AUCUN ENTRETIEN AJOUTE - Peut-être que l'immatriculation n'existe pas en BDD. L’avion n’a pas été mis à jour`);
       } finally {
-          if (connection) connection.release(); // Libère la connexion après l'exécution
+          if (connection) connection.release(); 
       }
     },
   
@@ -94,9 +106,13 @@ export const entretienModel = {
             const rows = await pool.query(
                 `DELETE FROM entretien WHERE id = ?`, [id] // Utilisation des placeholders pour éviter les injections SQL
             );
+
+            if (rows.affectedRows === 0) {
+              throw new Error(`AUCUN ENTRETIEN SUPPRIME - Peut-être que l'id n'existe pas en BDD.`);
+            }
             return rows;
         } catch (error) {
-            throw error; // Renvoyer l'erreur pour un traitement ultérieur
+          throw new Error(`AUCUN ENTRETIEN SUPPRIME - Peut-être que l'id n'existe pas en BDD.`);
         } finally {
             if (connection) connection.release(); // Libérer la connexion
         }
@@ -127,11 +143,14 @@ export const entretienModel = {
           // Exécution de la requête SQL
           connection = await pool.getConnection();
           const rows = await connection.query(query);
+          if (rows.affectedRows === 0) {
+            throw new Error(`AUCUN ENTRETIEN MODIFIE - Peut-être que l'immatriculation n'existe pas en BDD. L’entretien n’a pas été mis à jour`);
+          }
 
           return rows;
         }
       } catch (error) {
-        return error;
+        throw new Error(`AUCUN ENTRETIEN MODIFIE - Peut-être que l'id n'existe pas en BDD. L’entretien n’a pas été mis à jour`);
       } finally {
         if (connection) connection.release();
       }
