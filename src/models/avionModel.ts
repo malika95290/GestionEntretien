@@ -75,26 +75,42 @@ export const avionModel = {
     }
   },
 
-  addOne: async (avion: Avion) => {
+  addOne: async (avion: { immatriculation: any; marque: any; modele: any; }) => {
     let connection;
     try {
-      connection = await pool.getConnection();
-      const rows = await pool.query(
-        `insert into avion(immatriculation, marque, modele) 
-						values("${avion.immatriculation}", "${avion.marque}", 
-						"${avion.modele}");`
-      );
-      if (rows.length === 0) {
-        throw new Error(`AUCUN AVION AJOUTE`);
-      }
-      return rows;
+        // Validation des champs requis
+        if (!avion.immatriculation || !avion.marque || !avion.modele) {
+            throw new Error(
+                "AUCUN AVION AJOUTE ? Peut-être manque-t-il des données ?"
+            );
+        }
+
+        connection = await pool.getConnection();
+
+        const rows = await connection.query(
+            `INSERT INTO avion (immatriculation, marque, modele) 
+             VALUES (?, ?, ?);`,
+            [avion.immatriculation, avion.marque, avion.modele] // Utilisation des paramètres pour éviter les injections SQL
+        );
+
+        if (!rows.affectedRows) {
+            throw new Error("AUCUN AVION AJOUTE");
+        }
+
+        return rows;
     } catch (error) {
-      throw new Error(`AUCUN AVION AJOUTE`);
+        if (error instanceof Error) {
+            throw new Error(
+                error.message || "AUCUN AVION AJOUTE ? Peut-être manque-t-il des données ?"
+            );
+        } else {
+            throw new Error("Une erreur inconnue est survenue.");
+        }
     } finally {
-      if (connection) connection.release();
+        if (connection) connection.release();
     }
-  },
-  
+},
+
   // Requête SQL pour supprimer un avion
   delete: async (immatriculation: string) => {
     let connection;
@@ -137,14 +153,14 @@ export const avionModel = {
         query += ` where immatriculation = "${params["immatriculation"]}"`;
         connection = await pool.getConnection();
         const rows = await pool.query(query);
-
+        console.log(rows)
         if (rows.affectedRows === 0) {
-          throw new Error(`AUCUN AVION MODIFIE - Peut-être que l'immatriculation n'existe pas en BDD. L’avion n’a pas été mis à jour`);
+          throw new Error(`AUCUN AVION MODIFIE - Peut-être que l'immatriculation n'existe pas en BDD.`);
         }
         return rows;
       }
     } catch (error) {
-        throw new Error(`AUCUN AVION MODIFIE - Peut-être que l'immatriculation n'existe pas en BDD. L’avion n’a pas été mis à jour`);
+        throw new Error(`AUCUN AVION MODIFIE - Peut-être que l'immatriculation n'existe pas en BDD.`);
       } finally {
       if (connection) connection.release();
     }

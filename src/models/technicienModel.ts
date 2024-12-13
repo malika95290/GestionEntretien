@@ -79,25 +79,31 @@ export const technicienModel = {
     },
 
     // Ajouter un technicien
-    addOne: async (technicien: Technicien) => {
+    addOne: async (technicien: { nom: any; prenom: any; specialite: any; }) => {
         let connection;
         try {
+            if (!technicien.nom || !technicien.prenom || !technicien.specialite) {
+                throw new Error(
+                    "AUCUN TECHNICIEN AJOUTE ? Peut-être manque-t-il des données ?"
+                );
+            }
             connection = await pool.getConnection();
-            const rows = await pool.query(
+            const rows = await connection.query(
                 `INSERT INTO technicien (nom, prenom, specialite) 
-                 VALUES ("${technicien.nom}", "${technicien.prenom}", 
-                 "${technicien.specialite}");`
+                 VALUES (?, ?, ?);`,
+                [technicien.nom, technicien.prenom, technicien.specialite] // Utilisation des paramètres pour éviter les injections SQL
             );
-            if (rows.length === 0) {
-                throw new Error(`AUCUN TECHNICIEN AJOUTE`);
+            if (!rows.affectedRows) {
+                throw new Error("AUCUN TECHNICIEN AJOUTE ? Peut-être manque-t-il des données ?");
             }
             return rows;
         } catch (error) {
-            throw new Error(`AUCUN TECHNICIEN AJOUTE`);
+            throw new Error("AUCUN TECHNICIEN AJOUTE ? Peut-être manque-t-il des données ?");
         } finally {
             if (connection) connection.release();
         }
     },
+    
 
     // Supprimer un technicien par ID
     delete: async (id: number) => {
@@ -146,7 +152,6 @@ export const technicienModel = {
             if (rows.affectedRows === 0) {
                 throw new Error(`AUCUN TECHNICIEN MODIFIE - Peut-être que l'id n'existe pas en BDD. Le technicien n’a pas été mis à jour`);
             }
-            
             return rows;
         }
         } catch (error) {

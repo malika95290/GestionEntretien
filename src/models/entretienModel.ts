@@ -29,9 +29,7 @@ export const entretienModel = {
         const rows = await pool.query(
           `select * from entretien where id = "${id}"`
         );
-        // Vérification si des résultats ont été trouvés
         if (rows.length === 0) {
-          // Si aucun avion n'a été trouvé, lancer une erreur avec un message spécifique
           throw new Error(`AUCUN ENTRETIEN TROUVE AVEC L'id : ${id}`);
         }
         return rows;
@@ -60,10 +58,8 @@ export const entretienModel = {
             if (index !== keys.length - 1) query += " AND ";
           });
         }
-    
         const rows = await connection.query(query, values);
         if (rows.length === 0) {
-          // Si aucun erreur n'a été trouvé, lancer une erreur avec un message spécifique
           throw new Error(`AUCUN ENTRETIEN TROUVE - AVEC LES FILTRES DONNES ${JSON.stringify(params)}`);
         }
         return rows;
@@ -75,29 +71,50 @@ export const entretienModel = {
     },
 
     // Ajoute un nouvel entretien
-    addOne: async (entretien: Entretien) => {
+    addOne: async (entretien: { idTechnicien: any; immatriculation: any; dateEntretien: any; typeEntretien: any; remarque: any; }) => {
       let connection;
       try {
+        // Validation des champs requis
+          if (!entretien.idTechnicien || !entretien.immatriculation || !entretien.dateEntretien || !entretien.typeEntretien) {
+              throw new Error(
+                  "AUCUN ENTRETIEN AJOUTE ? Peut-être manque-t-il des données ?"
+              );
+          }
+  
           connection = await pool.getConnection();
   
-          // Insère l'entretien dans la table
           const result = await connection.query(
               `INSERT INTO entretien (idTechnicien, immatriculation, dateEntretien, remarque, typeEntretien) 
-              VALUES (?, ?, ?, ?, ?)`,
-              [entretien.idTechnicien, entretien.immatriculation, entretien.dateEntretien, entretien.remarque, entretien.typeEntretien]
+               VALUES (?, ?, ?, ?, ?);`,
+              [
+                  entretien.idTechnicien,
+                  entretien.immatriculation,
+                  entretien.dateEntretien,
+                  entretien.remarque || null,
+                  entretien.typeEntretien
+              ]
           );
   
-          // Retourne un objet avec l'ID de l'entretien nouvellement ajouté
+          if (!result.affectedRows) {
+              throw new Error("AUCUN ENTRETIEN AJOUTE");
+          }
+  
           return {
-              id: Number(result.insertId), 
-              ...entretien  
+              id: Number(result.insertId),
+              ...entretien
           };
       } catch (error) {
-          throw new Error(`AUCUN ENTRETIEN AJOUTE - Peut-être que l'immatriculation n'existe pas en BDD. L’avion n’a pas été mis à jour`);
+          if (error instanceof Error) {
+              throw new Error(
+                  error.message || "AUCUN ENTRETIEN AJOUTE ? Peut-être manque-t-il des données ?"
+              );
+          } else {
+              throw new Error("AUCUN ENTRETIEN AJOUTE ? Peut-être manque-t-il des données ?");
+          }
       } finally {
-          if (connection) connection.release(); 
+          if (connection) connection.release();
       }
-    },
+  },
   
       delete: async (id: number) => {
         let connection;
