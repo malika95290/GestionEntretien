@@ -1,0 +1,443 @@
+Voici les requêtes permettant de tester l'api (au format JSON):
+
+{
+	"info": {
+		"_postman_id": "cf6730b5-0d20-4dab-bc16-66c34c98cf6f",
+		"name": "API -GESTION ENTRETIEN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34894043"
+	},
+	"item": [
+		{
+			"name": "avions",
+			"item": [
+				{
+					"name": "All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/F-ABCD",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"F-ABCD"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filtres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/filtres?marque=boeing&modele=737",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"filtres"
+							],
+							"query": [
+								{
+									"key": "marque",
+									"value": "boeing"
+								},
+								{
+									"key": "modele",
+									"value": "737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter avion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"immatriculation\": \"AB-913\", \r\n    \"marque\": \"Dassault Aviation\", \r\n    \"modele\": \"Super Etendard\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/avions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier avion",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"immatriculation\": \"F-ABCD\",\r\n  \"marque\": \"Boeing\",\r\n  \"modele\": \"402\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/avions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer avion",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/AC12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"AC12"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "techniciens",
+			"item": [
+				{
+					"name": "All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/filtres?marque=boeing&modele=737",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"filtres"
+							],
+							"query": [
+								{
+									"key": "marque",
+									"value": "boeing"
+								},
+								{
+									"key": "modele",
+									"value": "737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/filtres?marque=boeing&modele=737",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"filtres"
+							],
+							"query": [
+								{
+									"key": "marque",
+									"value": "boeing"
+								},
+								{
+									"key": "modele",
+									"value": "737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filtres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/avions/filtres?marque=boeing&modele=737",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"avions",
+								"filtres"
+							],
+							"query": [
+								{
+									"key": "marque",
+									"value": "boeing"
+								},
+								{
+									"key": "modele",
+									"value": "737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter technicien",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/techniciens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"techniciens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier technicien",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"nom\": \"Dupont\",\r\n  \"prenom\": \"Jérôme\",\r\n  \"specialite\": \"Mécanique\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/techniciens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"techniciens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer technicien",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/techniciens/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"techniciens",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "entretiens",
+			"item": [
+				{
+					"name": "All",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "ById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Filtres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5500/entretiens/filtres?id=1&immatriculation=F-ABCD&typeEntretien=Révision générale",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"entretiens",
+								"filtres"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "immatriculation",
+									"value": "F-ABCD"
+								},
+								{
+									"key": "typeEntretien",
+									"value": "Révision générale"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter entretien",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idTechnicien\": 1,\r\n    \"immatriculation\": \"F-IJKL\",\r\n    \"dateEntretien\": \"2024-12-15\", \r\n    \"remarque\": \"ok\",\r\n    \"typeEntretien\": \"Contrôle annuel\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/entretiens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"entretiens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier entretien",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 10,\r\n  \"idTechnicien\": 1,\r\n  \"immatriculation\": \"F-ABCD\",\r\n  \"dateEntretien\": \"2024-10-22\",\r\n  \"remarque\": \"ok\",\r\n  \"typeEntretien\": \"Réparation moteur\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/entretiens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"entretiens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer entretien",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
